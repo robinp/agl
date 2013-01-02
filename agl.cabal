@@ -1,0 +1,47 @@
+--  see http://haskell.org/cabal/users-guide/
+
+name:                AGL
+version:             0.1.0.0
+synopsis:            Abstract Graphics Layer
+-- description:         
+homepage:            http://ron.shoutboot.com
+license:             BSD3
+license-file:        LICENSE
+author:              Robin Palotai
+maintainer:          palotai.robin@gmail.com
+-- copyright:           
+category:            Graphics
+build-type:          Simple
+cabal-version:       >=1.8
+
+library
+  exposed-modules:
+    AGL
+    AGL.SDL
+
+  other-modules:
+--    AGL.SDL.Example.Main
+
+  build-depends:
+    base ==4.5.*,
+--    transformers ==0.3.*
+    SDL  ==0.6.*,
+    lens ==3.7.*,
+    semigroups ==0.8.*,
+    data-default ==0.5.*
+
+executable sdl-example
+  main-is:    AGL/SDL/Example/Main.hs
+  build-depends:
+    base,
+    SDL,
+    mtl ==2.1.*,
+    lens,
+    semigroups,
+    data-default
+
+--test-suite doctests
+--  type:          exitcode-stdio-1.0
+--  ghc-options:   -threaded
+--  main-is:       AGL/Test/Doctests.hs
+--  build-depends: base, doctest >= 0.8
