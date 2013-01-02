@@ -57,7 +57,7 @@ drawSurfImage target si ds =
 
 -- | Draws the picture by pushing transforms through the standard AGL Transform
 -- | and delegating execution to drawSurfImage.
-drawSDL ds target pic = execTransform ds target pic drawSurfImage >> return ()
+drawSDL ds target pic = execTransform ds pic (drawSurfImage target) >> return ()
 
 -- | Draws the picture and flips the screen surface.
 renderSDL :: SDLT.Surface -> Picture SurfImage -> IO ()

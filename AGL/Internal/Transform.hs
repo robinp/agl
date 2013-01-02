@@ -30,13 +30,13 @@ mulAlpha a = dsAlpha %~ mappend a
 -- >>> let ds' = head $ runIdentity $ execTransform def img Blank echo
 -- >>> (ds'^.dsX, ds'^.dsY)
 -- (-5, -10)
-execTransform :: (Monad m, Image a) => DrawState -> t -> Picture a -> (t -> a -> DrawState -> m b) -> m [b]
-execTransform ds target pic f = execTransform' ds pic
+execTransform :: (Monad m, Image a) => DrawState -> Picture a -> (a -> DrawState -> m b) -> m [b]
+execTransform ds pic f = execTransform' ds pic
   where
   execTransform' ds pic = case pic of
     Blank           -> return []
     Pictures ps     -> liftM join $ mapM (execTransform' ds) ps
     Translate v p   -> execTransform' (translate v ds) p 
-    Draw a          -> liftM return $ f target a $ translate (both %~ negate $ imagePivotXY a) ds
+    Draw a          -> liftM return $ f a $ translate (both %~ negate $ imagePivotXY a) ds
     Transparent a p -> execTransform' (mulAlpha a ds) p
 
