@@ -5,6 +5,7 @@ module AGL.SDL
   ) where
 
 import Control.Lens
+import Control.Monad (void)
 
 import Data.Default (def)
 
@@ -17,22 +18,22 @@ import AGL.Internal.Transform
 import AGL.Internal.Transform.DrawState
 
 data SurfImage = SurfImage {
-  _imSurface :: SDLT.Surface,
-  _imW :: Double,
-  _imH :: Double,
-  _imPivot :: Pivot}
+  imSurface :: SDLT.Surface,
+  imW :: Double,
+  imH :: Double,
+  imPivot :: Pivot}
 
 instance Image SurfImage where
-  imageH = _imH
-  imageW = _imW
-  imagePivot = _imPivot
+  imageH = imH
+  imageW = imW
+  imagePivot = imPivot
 
 -- TODO add fromSDLSubSurface
 fromSDLSurface s p = SurfImage {
-  _imSurface = s,
-  _imW = fromIntegral $ SDLT.surfaceGetWidth s,
-  _imH = fromIntegral $ SDLT.surfaceGetHeight s,
-  _imPivot = p}
+  imSurface = s,
+  imW = fromIntegral $ SDLT.surfaceGetWidth s,
+  imH = fromIntegral $ SDLT.surfaceGetHeight s,
+  imPivot = p}
 
 -- | Draws the image to the SDL surface.
 --
@@ -40,24 +41,24 @@ fromSDLSurface s p = SurfImage {
 -- 
 drawSurfImage :: SDLT.Surface -> SurfImage -> DrawState -> IO ()
 drawSurfImage target si ds = 
-  let srcW = (SDLT.surfaceGetWidth . _imSurface) si 
-      srcH = (SDLT.surfaceGetHeight . _imSurface) si
+  let srcW = (SDLT.surfaceGetWidth . imSurface) si 
+      srcH = (SDLT.surfaceGetHeight . imSurface) si
       targetH = SDLT.surfaceGetHeight target
       aglBottomLeftX = ds^.dsX
       aglBottomLeftY = ds^.dsY
       sdlTopLeftX = round aglBottomLeftX
-      sdlTopLeftY = targetH - (round aglBottomLeftY) - srcH
+      sdlTopLeftY = targetH - round aglBottomLeftY - srcH
       drect = SDLR.Rect sdlTopLeftX sdlTopLeftY srcW srcH
-      srcSurf = _imSurface si
+      srcSurf = imSurface si
       alphaByte = floor . (255 *) . min 1.0 . max 0.0 . unAlpha
   in do
     SDLV.setAlpha srcSurf [SDLT.SrcAlpha] (ds^.dsAlpha.to alphaByte)
-    SDLV.blitSurface (_imSurface si) Nothing target (Just drect)
+    SDLV.blitSurface srcSurf Nothing target (Just drect)
     return ()
 
 -- | Draws the picture by pushing transforms through the standard AGL Transform
 -- | and delegating execution to drawSurfImage.
-drawSDL ds target pic = execTransform ds pic (drawSurfImage target) >> return ()
+drawSDL ds target pic = void $ execTransform ds pic (drawSurfImage target)
 
 -- | Draws the picture and flips the screen surface.
 renderSDL :: SDLT.Surface -> Picture SurfImage -> IO ()
