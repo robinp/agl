@@ -39,13 +39,14 @@ fromSDLSurface s p = SurfImage {
 --
 -- Blitting errors are ignored for now (are they even possible? With which SDL backends?)
 -- 
-drawSurfImage :: SDLT.Surface -> SurfImage -> DrawState -> IO ()
-drawSurfImage target si ds = 
+drawSurfImage :: SDLT.Surface -> SurfImage -> DrawState -> TranslateDrawState -> IO ()
+drawSurfImage target si ds translate = 
   let srcW = (SDLT.surfaceGetWidth . imSurface) si 
       srcH = (SDLT.surfaceGetHeight . imSurface) si
       targetH = SDLT.surfaceGetHeight target
-      aglBottomLeftX = ds^.dsX
-      aglBottomLeftY = ds^.dsY
+      ds' = translatePivot translate si ds
+      aglBottomLeftX = ds'^.dsX
+      aglBottomLeftY = ds'^.dsY
       sdlTopLeftX = round aglBottomLeftX
       sdlTopLeftY = targetH - round aglBottomLeftY - srcH
       drect = SDLR.Rect sdlTopLeftX sdlTopLeftY srcW srcH

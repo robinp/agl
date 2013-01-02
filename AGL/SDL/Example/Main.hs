@@ -21,7 +21,7 @@ main = do
   SG.quit
 
 doRender img surf = do
-  renderSDL surf $ Translate (100, 0) $ Transparent (alpha 0.25) $ Draw img
+  renderSDL surf $ Translated (100, 0) $ Transparent (alpha 0.25) $ Draw img
   STime.delay 1000
 
 runOrReport _ Nothing  = SG.getError >>= putStrLn . ("Failed with error: " ++) . show

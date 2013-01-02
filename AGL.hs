@@ -26,6 +26,8 @@ pivotLeft   = Pivot 0.0 0.5
 pivotRight  = Pivot 1.0 0.5
 
 -- | Minimal complete definition is imageH, imageW and imagePivot
+--
+-- TODO rename to something more descriptive (Pivoted?)
 class Image a where
   imageW :: a -> Double
   imageH :: a -> Double
@@ -40,12 +42,11 @@ class Image a where
   imagePivotXY :: a -> (Double, Double)
   imagePivotXY a = (imagePivotX a, imagePivotY a)
 
+-- TODO move to Internal, expose only type + builder functions
 data Picture a
-  = Blank -- TODO could be omitted (equal to Pictures []) ?
-  | Pictures [Picture a]
-  | Translate Vector (Picture a)
+  = Pictures [Picture a]
+  | Translated Vector (Picture a)
   | Transparent Alpha (Picture a)
   | Draw a
   -- Ink Color (Picture a)
-  -- TODO geom stuff (rect, circle)
 
