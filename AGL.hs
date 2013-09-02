@@ -11,15 +11,21 @@ type Vector = Point
 
 -- * Color and alpha
 
-data Color = Color { red :: !Int, green :: !Int, blue :: !Int }
+data Color = Color {
+  red   :: !Int,
+  green :: !Int,
+  blue  :: !Int}
 
 newtype Alpha = Alpha (Product Double) deriving (Monoid, Eq)
 alpha a = Alpha (Product a)
 unAlpha (Alpha (Product a)) = a
 
--- * Images
+-- * Pivoted things
 
-data Pivot = Pivot { pivotX :: Double, pivotY :: Double }
+data Pivot = Pivot {
+  pivotX :: Double,
+  pivotY :: Double}
+
 pivotCenter = Pivot 0.5 0.5
 pivotBottom = Pivot 0.5 0.0
 pivotLeft   = Pivot 0.0 0.5
@@ -27,11 +33,10 @@ pivotRight  = Pivot 1.0 0.5
 
 -- | Minimal complete definition is imageH, imageW and imagePivot
 --
--- TODO rename to something more descriptive (Pivoted?)
-class Image a where
-  imageW :: a -> Double
-  imageH :: a -> Double
-  imagePivot :: a -> Pivot
+class Pivoted a where
+  pivotedW :: a -> Double
+  pivotedH :: a -> Double
+  pivot :: a -> Pivot
 
   imagePivotX :: a -> Double
   imagePivotX a = imageW a * (pivotX . imagePivot) a
